@@ -14,5 +14,14 @@ export async function getAllQuestions(major) {
     let results = await collection.find({})
         .limit(5)
         .toArray();
-    return results;
+    return shuffle(results);
 }
+
+export function shuffle(array) {
+    array = [...array];
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}; 
