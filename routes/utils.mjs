@@ -12,9 +12,8 @@ export async function getQuestion(req, major) {
 export async function getAllQuestions(major) {
     let collection = await db.collection(major);
     let results = await collection.find({})
-        .limit(5)
         .toArray();
-    return shuffle(results);
+    return shuffle(results).splice(0, 4);
 }
 
 export function shuffle(array) {
