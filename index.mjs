@@ -2,22 +2,34 @@ import express from "express";
 import cors from "cors";
 import "./loadEnvironment.mjs";
 import "express-async-errors";
-import hinduHistory from "./routes/hinduHistoryQuestions.mjs"
-import hinduIdentity from "./routes/hinduIdentityQuestions.mjs"
-import hinduPhilosophy from "./routes/hinduPhilosophyQuestions.mjs"
-import knowyourNation from "./routes/knowyourNationQuestions.mjs"
+import router from "./routes/majorSubjectQuestions.mjs"
 
+// import { auth } from "express-oauth2-jwt-bearer";
+import bodyParser from "body-parser";
 const PORT = process.env.PORT || 5050;
 const app = express();
 
+// parse application/json
+app.use(bodyParser.json());
 app.use(cors());
-app.use(express.json());
 
-// Load the /posts routes
-app.use("/hinduHistory", hinduHistory);
-app.use("/hinduIdentity", hinduIdentity);
-app.use("/hinduPhilosophy", hinduPhilosophy);
-app.use("/knowyourNation", knowyourNation);
+//TODO: check can this be removed if body parser is removed?
+// app.use(express.json());
+
+//TODO: ho to secure API? add throtell
+// app.use((req, res, next) => { console.log('token' + req.headers.authorization); next(); });
+// const jwtCheck = auth({
+//   audience: 'dev-88bircurddzvffqn.us.auth0.com',
+//   issuerBaseURL: 'https://dev-88bircurddzvffqn.us.auth0.com',
+//   tokenSigningAlg: 'RS256'
+// });
+
+// enforce on all endpoints
+// app.use(jwtCheck);
+
+
+app.use("/", router);
+
 
 // Global error handling
 app.use((err, _req, res, next) => {

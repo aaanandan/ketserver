@@ -2,9 +2,9 @@ import express from "express";
 import db from "../db/conn.mjs";
 import { ObjectId } from "mongodb";
 
-export async function getQuestion(req, major) {
-    let collection = await db.collection(major);
-    let query = { _id: ObjectId(req.params.id) };
+export async function getQuestion(req) {
+    let collection = await db.collection(req.body.major);
+    let query = { _id: ObjectId(req.body._questionId) };
     let result = await collection.findOne(query);
     return result;
 }
