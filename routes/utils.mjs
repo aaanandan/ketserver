@@ -32,7 +32,6 @@ export async function getUserAttempts(req) {
         hinduIdentity: await getAttemptCount(req, 'hinduIdentity'),
         knowYourNation: await getAttemptCount(req, 'knowYourNation')
     }
-    console.log(response);
     return response;
 }
 
@@ -51,10 +50,9 @@ export async function updateUser(req) {
     let options = { sort: { "index": -1 } };
     let rec = await collection.findOne(query, options);
     let index = rec ? rec.index + 1 : 1;
-    console.log(rec, index);
+    // console.log(rec, index);
     let doc = { name: req.body.name || '', email: req.body.email, major: req.body.major, index, response: [{}] };
     await collection.insertOne(doc).then(() => {
-
         console.log('added new attempt');
     }).catch(e => {
         console.log('e', e);

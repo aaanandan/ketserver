@@ -4,7 +4,7 @@ import "./loadEnvironment.mjs";
 import "express-async-errors";
 import router from "./routes/majorSubjectQuestions.mjs"
 
-// import { auth } from "express-oauth2-jwt-bearer";
+import { auth } from "express-oauth2-jwt-bearer";
 import bodyParser from "body-parser";
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -16,20 +16,16 @@ app.use(cors());
 //TODO: check can this be removed if body parser is removed?
 // app.use(express.json());
 
-//TODO: ho to secure API? add throtell
-// app.use((req, res, next) => { console.log('token' + req.headers.authorization); next(); });
-// const jwtCheck = auth({
-//   audience: 'dev-88bircurddzvffqn.us.auth0.com',
-//   issuerBaseURL: 'https://dev-88bircurddzvffqn.us.auth0.com',
-//   tokenSigningAlg: 'RS256'
-// });
+//TODO:  add throtell
+const jwtCheck = auth({
+  audience: 'kerserver.onrender.com',
+  issuerBaseURL: 'https://dev-88bircurddzvffqn.us.auth0.com',
+  tokenSigningAlg: 'RS256'
+});
 
 // enforce on all endpoints
-// app.use(jwtCheck);
-
-
+app.use(jwtCheck);
 app.use("/", router);
-
 
 // Global error handling
 app.use((err, _req, res, next) => {
