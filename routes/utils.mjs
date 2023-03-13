@@ -11,9 +11,16 @@ export async function getQuestion(req) {
 
 export async function getAllQuestions(major) {
     let collection = await db.collection(major);
-    let results = await collection.find({})
+    let mcq = await collection.find({ type: "mcq" })
         .toArray();
-    return shuffle(results).splice(0, 4);
+    let applications = await collection.find({ type: "application" })
+        .toArray();
+    let activity = await collection.find({ type: "activity" })
+        .toArray();
+    const mcqQuestions = shuffle(mcq).splice(0, 4);
+    const applicationQuestions = shuffle(applications).splice(0, 2);
+    const activitesQuestions = shuffle(activity).splice(0, 1);
+    return [...mcqQuestions, ...applicationQuestions, ...activitesQuestions];
 }
 
 export function shuffle(array) {
@@ -44,14 +51,14 @@ async function getAttemptCount(req, major) {
     return 0;
 }
 
-export async function updateUser(req) {
+export async function addAttempt(req) {
     let collection = db.collection('quizUser');
     let query = { email: req.body.email, major: req.body.major };
     let options = { sort: { "index": -1 } };
     let rec = await collection.findOne(query, options);
     let index = rec ? rec.index + 1 : 1;
     // console.log(rec, index);
-    let doc = { name: req.body.name || '', email: req.body.email, major: req.body.major, index, response: [{}] };
+    let doc = { name: req.body.name || '', email: req.body.email, major: req.body.major, index, createdAt: Date(), response: [{}] };
     await collection.insertOne(doc).then(() => {
         console.log('added new attempt');
     }).catch(e => {
@@ -63,13 +70,13 @@ export async function updateUser(req) {
 export async function updateUserResponse(req, ans) {
     let collection = db.collection('quizUser');
     let query = { email: req.body.email, major: req.body.major };
-    let sort = { sort: { "index": -1 } };
+
     let question = req.body.question;
     question.correct_answer = ans;
     question.point = question.correct_answer === question.user_answer ? 1 : 0;
     let response = [...req.body.questionsAndAnswers, question];
-    // console.log(response);
-    // // let rec = await collection.findOneAndUpdate(query, sort, response).then(() => { console.log('updated response') }).catch((e) => {
-    // //     console.log(e);
-    // // });
+    await collection.updateOne(query, { $set: { response: response }, $currentDate: { lastModified: true } }).then(() => { console.log('updated response') }).catch((e) => {
+        console.log(e);
+    });
+
 }
