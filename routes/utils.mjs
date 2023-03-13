@@ -17,8 +17,8 @@ export async function getAllQuestions(major) {
         .toArray();
     let activity = await collection.find({ type: "activity" })
         .toArray();
-    const mcqQuestions = shuffle(mcq).splice(0, 4);
-    const applicationQuestions = shuffle(applications).splice(0, 2);
+    const mcqQuestions = shuffle(mcq).splice(0, 24);
+    const applicationQuestions = shuffle(applications).splice(0, 5);
     const activitesQuestions = shuffle(activity).splice(0, 1);
     return [...mcqQuestions, ...applicationQuestions, ...activitesQuestions];
 }
